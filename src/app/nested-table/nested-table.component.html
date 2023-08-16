@@ -1,0 +1,95 @@
+<div id="container" class="container mt-5">
+  <form [formGroup]="searchForm">
+    <span>Search through all collection. Results will be higlighted with light blue.</span>
+    <input formControlName="search" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+  </form>
+  <table *ngIf="loadAndSearchData$ | async as display" class="table table-bordered nested-table">
+    <thead>
+      <tr>
+        <th resizeColumn><input *ngIf="!selected" type="checkbox" /> <button *ngIf="selected" class="btn btn-danger btn-sm">Delete
+            Multiple</button>
+        </th>
+        <th resizeColumn>
+          Name
+        </th>
+        <th resizeColumn>Type</th>
+        <th resizeColumn>Email</th>
+        <th resizeColumn>Phone Number</th>
+        <th resizeColumn>Company Name</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let person of display">
+        <tr>
+          <ng-container>
+            <td (mouseenter)="person.hover = true" (mouseleave)="person.hover = false"
+              [ngClass]="{'highlight': person.highlight, 'hoverable': person.hover}"><input type="checkbox"
+                (change)="onSelected($event,person)" /></td>
+            <td (mouseenter)="person.hover = true" (mouseleave)="person.hover = false"
+              [ngClass]="{'highlight': person.highlight,'hoverable': person.hover}">
+              {{ person.name }} <i (click)="toggleExpand(person)" [ngClass]="{'rotate': person.expanded }"
+                class="bi bi-arrow-right-short"></i>
+              <div class="d-inline-block ms-2" *ngIf="person.hover && !selected">
+                <button class="btn btn-primary btn-sm me-2">Edit</button>
+                <button class="btn btn-danger btn-sm">Delete</button>
+              </div>
+            </td>
+            <td (mouseenter)="person.hover = true" (mouseleave)="person.hover = false"
+              [ngClass]="{'highlight': person.highlight,'hoverable': person.hover }">{{ person.type }}</td>
+            <td (mouseenter)="person.hover = true" (mouseleave)="person.hover = false"
+              [ngClass]="{'highlight': person.highlight,'hoverable': person.hover}">{{ person.email }}</td>
+            <td (mouseenter)="person.hover = true" (mouseleave)="person.hover = false"
+              [ngClass]="{'highlight': person.highlight,'hoverable': person.hover}">{{ person.phoneNo }}
+            </td>
+            <td (mouseenter)="person.hover = true" (mouseleave)="person.hover = false"
+              [ngClass]="{'highlight': person.highlight,'hoverable': person.hover}">{{ person.companyName }}
+            </td>
+          </ng-container>
+        </tr>
+        <ng-container
+          *ngTemplateOutlet="person.expanded ? childrenTemplate : empty ; context: {children: person.children, level: 1 }"></ng-container>
+      </ng-container>
+      <tr *ngIf="isLoading" #lastRow>
+        <td colspan="6" class="text-center">Loading...</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<ng-template #empty></ng-template>
+<ng-template #childrenTemplate let-level="level" let-children="children">
+  <ng-container *ngFor="let child of children">
+    <tr>
+      <td (mouseenter)="child.hover = true" (mouseleave)="child.hover = false"
+        [ngClass]="{'highlight': child.highlight,'hoverable': child.hover}"
+        [ngStyle]="{'padding-left': 14 * level + 'px'}"><input type="checkbox" (change)="onSelected($event,child)" />
+      </td>
+      <td (mouseenter)="child.hover = true" (mouseleave)="child.hover = false"
+        [ngClass]="{'highlight': child.highlight, 'hoverable': child.hover}"
+        [ngStyle]="{'padding-left': 14 * level + 'px'}">{{ child.name }} <i (click)="toggleExpand(child)"
+          [ngClass]="{'rotate': child.expanded }" class="bi bi-arrow-right-short"></i>
+        <div class="d-inline-block ms-2" *ngIf="child.hover && !selected">
+          <button class="btn btn-danger btn-sm">Delete</button>
+        </div>
+      </td>
+      <td (mouseenter)="child.hover = true" (mouseleave)="child.hover = false"
+        [ngClass]="{'highlight': child.highlight, 'hoverable': child.hover}"
+        [ngStyle]="{'padding-left': 14 * level + 'px'}">{{ child.type }}
+      </td>
+      <td (mouseenter)="child.hover = true" (mouseleave)="child.hover = false"
+        [ngClass]="{'highlight': child.highlight, 'hoverable': child.hover}"
+        [ngStyle]="{'padding-left': 14 * level + 'px'}">{{ child.email }}
+      </td>
+      <td (mouseenter)="child.hover = true" (mouseleave)="child.hover = false"
+        [ngClass]="{'highlight': child.highlight, 'hoverable': child.hover}"
+        [ngStyle]="{'padding-left': 14 * level + 'px'}">{{ child.phoneNo }}
+      </td>
+      <td (mouseenter)="child.hover = true" (mouseleave)="child.hover = false"
+        [ngClass]="{'highlight': child.highlight, 'hoverable': child.hover}"
+        [ngStyle]="{'padding-left': 14 * level + 'px'}">{{
+        child.companyName }}</td>
+    </tr>
+    <ng-container
+      *ngTemplateOutlet="child.expanded ? childrenTemplate : empty ; context: {children: child.children, level: level + 1}"></ng-container>
+  </ng-container>
+</ng-template>

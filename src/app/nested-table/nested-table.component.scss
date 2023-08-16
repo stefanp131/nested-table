@@ -1,0 +1,33 @@
+#container {
+  min-height: 200px;
+  max-height: 100vh;
+  overflow-y: auto;
+}
+
+.rotate {
+  display: inline-block;
+  transition: all 0.3s ease;
+  transform: rotate(90deg);
+}
+
+th {
+  position: relative;
+}
+
+
+.highlight {
+  background-color: lightblue;
+}
+
+.resize-handle {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+}
+
+.hoverable {
+  background-color: rgba(0, 0, 0, 0.075);
+}
