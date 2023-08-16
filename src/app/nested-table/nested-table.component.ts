@@ -65,7 +65,7 @@ export class NestedTableComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.scrollingSubscription.unsubscribe();
   }
-  
+
   private initForm() {
     this.searchForm = this.formBuilder.group({
       search: [''],
@@ -74,9 +74,6 @@ export class NestedTableComponent implements OnInit, OnDestroy {
 
   private loadMoreData() {
     this.isLoading = true;
-    // we create a new reference in case it was poluted by the search by expanding the parents and highlighting.
-    this.overallData = JSON.parse(JSON.stringify(data)); 
-
     const startIndex = this.currentPage * this.pageSize;
     const endIndex = startIndex + this.pageSize;
 
@@ -87,7 +84,7 @@ export class NestedTableComponent implements OnInit, OnDestroy {
           this.overallData.slice(startIndex, endIndex)
         );
 
-        //remerge for a new reference, otherwise the async won't trigger. 
+        //remerge for a new reference, otherwise the async won't trigger.
         //the async will unsubscribe from the oldest reference and will subscribe to the new one. No memory loss.
         this.loadAndSearchData$ = merge(
           of(this.displayedData),
@@ -106,6 +103,8 @@ export class NestedTableComponent implements OnInit, OnDestroy {
       debounceTime(500),
       map((term) => {
         if (term) {
+          this.overallData = JSON.parse(JSON.stringify(data));
+
           this.searchForName(this.overallData, term);
           return term;
         }
@@ -132,8 +131,8 @@ export class NestedTableComponent implements OnInit, OnDestroy {
     );
   }
 
-  //search recursively for the rows that respect the match. 
-  //populate the global variable searchResultWithParents with the parents. 
+  //search recursively for the rows that respect the match.
+  //populate the global variable searchResultWithParents with the parents.
   //after this we will select only the highest parent.
   private searchForName(data: RowData[], targetName: string): RowData[] {
     const matchingRows: RowData[] = [];
@@ -162,8 +161,8 @@ export class NestedTableComponent implements OnInit, OnDestroy {
 
     return matchingRows;
   }
-  
-  //when you are near the bottom of the scroll load more data 
+
+  //when you are near the bottom of the scroll load more data
   private infiniteScrolling() {
     const containerElement =
       this.elementRef.nativeElement.querySelector('#container');
@@ -184,6 +183,7 @@ export class NestedTableComponent implements OnInit, OnDestroy {
   }
 
   private reset() {
+    this.overallData = JSON.parse(JSON.stringify(data));
     this.isLoading = true;
     this.currentPage = 0;
     this.displayedData = [];
